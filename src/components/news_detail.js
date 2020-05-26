@@ -5,7 +5,6 @@ import {
   View,
   Image,
   SafeAreaView,
-  TouchableOpacity,
   Dimensions,
   AsyncStorage,
   Animated,
@@ -14,6 +13,7 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
+import {TouchableOpacity} from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import coin from '../../images/coin.png';
 const {width, height} = Dimensions.get('window');
@@ -28,7 +28,7 @@ import {
 import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
 import quyengop from '../api/quyengop';
 import Loading from '../loading/myIsLoading';
-export default class changepass extends Component {
+export default class news_details extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,22 +57,24 @@ export default class changepass extends Component {
     Animated.timing(this.state.xValue, {
       toValue: width - width,
       duration: 0,
+      useNativeDriver: false,
     }).start();
   };
   _backAnimation = () => {
     Animated.timing(this.state.xValue, {
       toValue: width,
       duration: 0,
+      useNativeDriver: false,
     }).start();
   };
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   };
@@ -87,21 +89,18 @@ export default class changepass extends Component {
   getdata() {
     const {id} = this.state;
     getUserByID(id)
-      .then(resSodu => resSodu[0]['SoDuTK'])
-      .then(resJSON => {
+      .then((resSodu) => resSodu[0]['SoDuTK'])
+      .then((resJSON) => {
         this.setState({sodu: resJSON});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   }
 
   quyengopAnimate() {
     const item = this.props.navigation.state.params.item;
-    if (item.ThoiGian * 1 <= 0) {
-      Alert.alert('Notice!', 'Thời gian quyên góp hiện đã hết!');
-      return;
-    } else if ((item.ChiDK - item.SoDuTK) * 1 <= 0) {
+    if ((item.ChiDK - item.SoDuTK) * 1 <= 0) {
       Alert.alert(
         'Notice!',
         'Đã đạt số tiền dự kiến! Vui lòng sang hoạt động khác!',
@@ -130,8 +129,7 @@ export default class changepass extends Component {
   }
   onSuccess() {
     Alert.alert('Quyên góp thành công!', 'Cảm ơn tấm lòng hảo tâm của bạn!');
-    this.setState({isLoading: false});
-    this.setState({sotien: null});
+    this.setState({isLoading: false, sotien: null});
   }
   onFail() {
     this.setState({isLoading: false});
@@ -145,19 +143,19 @@ export default class changepass extends Component {
     const {id, sotien} = this.state;
     const item = this.props.navigation.state.params.item;
     quyengop(id, item.idHoatDong, sotien)
-      .then(res => res['message'])
-      .then(result => {
+      .then((res) => res['message'])
+      .then((result) => {
         if (result === 'success') return this.onSuccess();
         else this.onFail();
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   }
   render() {
     const item = this.props.navigation.state.params.item;
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.header}>
           <Image style={styles.imgSuKien} source={{uri: item.Anh}} />
         </View>
@@ -182,7 +180,7 @@ export default class changepass extends Component {
               <TouchableOpacity
                 onPress={() => {
                   this.quyengopAnimate();
-                  this.textInput_money.focus();
+                  //this.textInput_money.focus();
                 }}
                 style={styles.btnQuyenGopOut}>
                 <Text style={styles.txtBtnQuyenGopOut}>Quyên góp</Text>
@@ -208,9 +206,9 @@ export default class changepass extends Component {
                 </Text>
                 <Text style={styles.txtSotien}>{this.state.sodu} VNĐ</Text>
                 <TextInput
-                  ref={view => (this.textInput_money = view)}
+                  ref={(view) => (this.textInput_money = view)}
                   style={styles.ipTien}
-                  onChangeText={text => this.setState({sotien: text})}
+                  onChangeText={(text) => this.setState({sotien: text})}
                   value={this.state.sotien}
                   placeholder="Nhập số tiền..."
                   keyboardType="default"
@@ -227,7 +225,7 @@ export default class changepass extends Component {
             </Animatable.View>
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
     );
   }
 }

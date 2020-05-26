@@ -1,18 +1,10 @@
 import React, {Component} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Animated,
-  Easing,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, Animated, Easing} from 'react-native';
 import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-// import loading from '../../images/loading.png';
 import loading from '../../images/loading.gif';
 export default class login extends Component {
   constructor(props) {
@@ -28,10 +20,12 @@ export default class login extends Component {
         toValue: 100,
         duration: 1000,
         easing: Easing.linear,
+        useNativeDriver: true,
       }),
       Animated.timing(this.state.rotateValue, {
         toValue: 0,
         duration: 0,
+        useNativeDriver: true,
       }),
     ]).start(() => {
       this.rotateAnimation();

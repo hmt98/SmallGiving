@@ -35,13 +35,11 @@ export default class donate_infor extends Component {
   refreshDataFromServer = () => {
     this.setState({refreshing: true});
     getHoatDongFromServer()
-      .then(hoatdong => {
-        this.setState({hoatdongFromServer: hoatdong});
-        this.setState({refreshing: false});
+      .then((hoatdong) => {
+        this.setState({hoatdongFromServer: hoatdong, refreshing: false});
       })
-      .catch(error => {
-        this.setState({hoatdongFromServer: []});
-        this.setState({refreshing: false});
+      .catch((error) => {
+        this.setState({hoatdongFromServer: [], refreshing: false});
       });
   };
   onRefresh = () => {
@@ -56,7 +54,7 @@ export default class donate_infor extends Component {
           sliderHeight={hp('100%')}
           itemWidth={wp('90%')}
           data={this.state.hoatdongFromServer}
-          renderItem={item => (
+          renderItem={(item) => (
             <Donate_infor_items
               item={item.item}
               index={item.index}

@@ -52,11 +52,11 @@ export default class Contact extends Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   };
@@ -69,19 +69,19 @@ export default class Contact extends Component {
   }
 
   getdata() {
-    this.setState({refreshing: true});
-    this.setState({isLoading: false});
+    this.setState({refreshing: true, isLoading: false});
+    //this.setState({isLoading: false});
     const {id} = this.state;
     getUserByID(id)
-      .then(resName => resName[0]['TenNguoiDung'])
-      .then(resJSON => {
-        this.setState({name: resJSON});
+      .then((resName) => resName[0]['TenNguoiDung'])
+      .then((resJSON) => {
+        this.setState({name: resJSON, refreshing: false});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
-    this.setState({refreshing: false});
-    this.setState({isLoading: false});
+    //this.setState({refreshing: false});
+    //this.setState({isLoading: false});
   }
 
   onSuccess() {
@@ -110,12 +110,12 @@ export default class Contact extends Component {
     } else {
       this.setState({isLoading: true});
       contact(id, noidung)
-        .then(res => res['message'])
-        .then(result => {
+        .then((res) => res['message'])
+        .then((result) => {
           if (result === 'Success') return this.onSuccess();
           else this.onFail();
         })
-        .catch(error => {
+        .catch((error) => {
           this.onFailNetWork(error);
         });
     }
@@ -162,7 +162,7 @@ export default class Contact extends Component {
               <TextInput
                 style={styles.inputGopY}
                 multiline={true}
-                onChangeText={text => this.setState({noidung: text})}
+                onChangeText={(text) => this.setState({noidung: text})}
                 value={this.state.noidung}
               />
             </View>

@@ -4,10 +4,8 @@ import {
   Text,
   View,
   Image,
-  Dimensions,
   TouchableOpacity,
   AsyncStorage,
-  Alert,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -33,11 +31,11 @@ export default class menu extends React.Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   };
 
   componentDidUpdate(preProps, preState, a) {
@@ -50,11 +48,11 @@ export default class menu extends React.Component {
   getdata() {
     const {id} = this.state;
     getUserByID(id)
-      .then(resName => resName[0]['TenNguoiDung'])
-      .then(resJSON => {
+      .then((resName) => resName[0]['TenNguoiDung'])
+      .then((resJSON) => {
         this.setState({name: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   }
 
   home() {
@@ -157,11 +155,11 @@ const styles = StyleSheet.create({
     marginTop: hp('3%'),
   },
   imgBtn: {
-    flex: 1,
+    flex: 2,
     marginLeft: '10%',
   },
   txtBtn: {
-    flex: 9,
+    flex: 8,
     marginLeft: wp('2%'),
     fontSize: f(2.5),
   },

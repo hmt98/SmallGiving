@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -29,8 +29,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import coin from '../../images/coin.png';
 import getUserByToken from '../api/getUserByToken';
 import getUserByID from '../api/getUserByID';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import quyengop from '../api/quyengop';
+
 export default class Donate_infor_items extends Component {
   constructor(props) {
     super(props);
@@ -56,9 +56,10 @@ export default class Donate_infor_items extends Component {
 
   _goAnimation = () => {
     Animated.timing(this.state.xValue, {
-      toValue: height / 50,
+      toValue: 0,
       duration: 0,
       easing: Easing.linear,
+      useNativeDriver: false,
     }).start();
   };
 
@@ -68,17 +69,18 @@ export default class Donate_infor_items extends Component {
       toValue: height,
       duration: 0,
       easing: Easing.linear,
+      useNativeDriver: false,
     }).start();
   };
 
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   };
@@ -93,20 +95,17 @@ export default class Donate_infor_items extends Component {
   getdata() {
     const {id} = this.state;
     getUserByID(id)
-      .then(resSodu => resSodu[0]['SoDuTK'])
-      .then(resJSON => {
+      .then((resSodu) => resSodu[0]['SoDuTK'])
+      .then((resJSON) => {
         this.setState({sodu: resJSON});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   }
 
   quyengopAnimate() {
-    if (this.props.item.ThoiGian * 1 <= 0) {
-      Alert.alert('Notice!', 'Thời gian quyên góp hiện đã hết!');
-      return;
-    } else if ((this.props.item.ChiDK - this.props.item.SoDuTK) * 1 <= 0) {
+    if ((this.props.item.ChiDK - this.props.item.SoDuTK) * 1 <= 0) {
       Alert.alert(
         'Notice!',
         'Đã đạt số tiền dự kiến! Vui lòng sang hoạt động khác!',
@@ -136,8 +135,7 @@ export default class Donate_infor_items extends Component {
   }
   onSuccess() {
     Alert.alert('Quyên góp thành công!', 'Cảm ơn tấm lòng hảo tâm của bạn!');
-    this.setState({isLoading: false});
-    this.setState({sotien: null});
+    this.setState({isLoading: false, sotien: null});
   }
   onFail() {
     this.setState({isLoading: false});
@@ -151,12 +149,12 @@ export default class Donate_infor_items extends Component {
     const {id, sotien} = this.state;
     const {item} = this.props;
     quyengop(id, item.idHoatDong, sotien)
-      .then(res => res['message'])
-      .then(result => {
+      .then((res) => res['message'])
+      .then((result) => {
         if (result === 'success') return this.onSuccess();
         else this.onFail();
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   }
@@ -164,7 +162,7 @@ export default class Donate_infor_items extends Component {
   render() {
     const {item, index, parallaxProps} = this.props;
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ParallaxImage
           containerStyle={styles.imageContainer}
           style={styles.image}
@@ -188,7 +186,7 @@ export default class Donate_infor_items extends Component {
               </View>
               <View style={styles.chuong}>
                 <TouchableOpacity onPress={this.follow}>
-                  <Animatable.View ref={a => (this.bell = a)}>
+                  <Animatable.View ref={(a) => (this.bell = a)}>
                     <FontAwesome
                       name={'bell'}
                       size={wp('6%')}
@@ -226,10 +224,9 @@ export default class Donate_infor_items extends Component {
             </View>
             <View style={styles.quyengop}>
               <TouchableOpacity
-                disabled={this.state.disabled}
                 onPress={() => {
                   this.quyengopAnimate();
-                  this.textInput_money.focus();
+                  // this.textInput_money.focus();
                 }}
                 style={styles.btnQuyengop}>
                 <Text style={styles.ttQuyengop}>Quyên góp</Text>
@@ -262,8 +259,8 @@ export default class Donate_infor_items extends Component {
           </View>
         </View>
         <Animatable.View
-          animation="fadeInUpBig"
-          duration={1000}
+          // animation="fadeInUpBig"
+          // duration={1000}
           style={[styles.containerDN, {bottom: this.state.xValue}]}>
           <KeyboardAvoidingView behavior="height" keyboardVerticalOffset={100}>
             <View style={styles.animateView}>
@@ -273,9 +270,9 @@ export default class Donate_infor_items extends Component {
               </Text>
               <Text style={styles.txtSoTien}>{this.state.sodu} VNĐ</Text>
               <TextInput
-                ref={view => (this.textInput_money = view)}
+                // ref={(view) => (this.textInput_money = view)}
                 style={styles.ipTien}
-                onChangeText={text => this.setState({sotien: text})}
+                onChangeText={(text) => this.setState({sotien: text})}
                 value={this.state.sotien}
                 placeholder="Nhập số tiền..."
               />
@@ -300,7 +297,7 @@ export default class Donate_infor_items extends Component {
             </View>
           </KeyboardAvoidingView>
         </Animatable.View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -396,7 +393,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   quyengop: {
-    marginTop: '1%',
+    marginTop: 10,
   },
   btnQuyengop: {
     height: hp('6%'),

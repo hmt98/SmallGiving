@@ -25,7 +25,7 @@ import forgot_pass from './components/forgot_pass';
 import reset_pass from './components/reset_pass';
 import otp from './components/otp';
 import donate_infor from './components/donate_infor';
-import donate from './components/donate';
+// import donate from './components/donate';
 import news_details from './components/news_detail';
 import home from './components/home';
 import menu from './components/menu';
@@ -48,12 +48,6 @@ const BlogPage = createStackNavigator({
 const DonatePage = createStackNavigator({
   Donate_infor: {
     screen: donate_infor,
-    navigationOptions: {
-      headerShown: false,
-    },
-  },
-  Donate: {
-    screen: donate,
     navigationOptions: {
       headerShown: false,
     },
