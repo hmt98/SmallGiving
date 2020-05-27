@@ -12,8 +12,8 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
-import {TouchableOpacity} from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import coin from '../../images/coin.png';
 const {width, height} = Dimensions.get('window');
@@ -155,7 +155,7 @@ export default class news_details extends Component {
   render() {
     const item = this.props.navigation.state.params.item;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Image style={styles.imgSuKien} source={{uri: item.Anh}} />
         </View>
@@ -180,7 +180,7 @@ export default class news_details extends Component {
               <TouchableOpacity
                 onPress={() => {
                   this.quyengopAnimate();
-                  //this.textInput_money.focus();
+                  this.textInput_money.focus();
                 }}
                 style={styles.btnQuyenGopOut}>
                 <Text style={styles.txtBtnQuyenGopOut}>Quyên góp</Text>
@@ -225,7 +225,7 @@ export default class news_details extends Component {
             </Animatable.View>
           </View>
         </KeyboardAvoidingView>
-      </View>
+      </SafeAreaView>
     );
   }
 }
