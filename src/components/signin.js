@@ -12,6 +12,7 @@ import {
 import Entypo from 'react-native-vector-icons/Entypo';
 import logo from '../../images/logo.png';
 import register from '../api/register';
+import signup from '../way4/signup';
 import Feather from 'react-native-vector-icons/Feather';
 import {
   widthPercentageToDP as wp,
@@ -48,20 +49,29 @@ export default class sigin extends Component {
     };
   };
 
+  onSuccessW4() {
+    const {name, sdt, email, matkhau, matkhau2} = this.state;
+    signup(name, sdt, sdt, sdt, email)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'success') return this.onSuccess();
+        else this.onFail();
+      })
+      .catch((error) => {
+        this.onFailNetWork();
+      });
+  }
   onSuccess() {
     Alert.alert('Đăng ký thành công!');
     this.props.navigation.navigate('Login');
     this.setState({isLoading: false});
   }
-
   onFail() {
     Alert.alert('Error!', 'Email hoặc SĐT đã tồn tại!');
-    this.setState({email: ''});
-    this.setState({sdt: ''});
     this.setState({isLoading: false});
   }
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại');
     this.setState({isLoading: false});
   }
   registerUser() {
@@ -86,13 +96,13 @@ export default class sigin extends Component {
     }
     this.setState({isLoading: true});
     register(name, sdt, email, matkhau)
-      .then(res => res['message'])
-      .then(result => {
-        if (result === 'Dang ki thanh cong') return this.onSuccess();
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'Dang ki thanh cong') return this.onSuccessW4();
         else this.onFail();
       })
-      .catch(error => {
-        this.onFailNetWork(error);
+      .catch((error) => {
+        this.onFailNetWork();
       });
   }
 
@@ -120,7 +130,7 @@ export default class sigin extends Component {
             <TextInput
               style={styles.textInputIn}
               placeholder={'Nhập họ tên'}
-              onChangeText={text => this.setState({name: text})}
+              onChangeText={(text) => this.setState({name: text})}
               value={this.state.name}
             />
           </View>
@@ -128,7 +138,7 @@ export default class sigin extends Component {
             <TextInput
               style={styles.textInputIn}
               placeholder={'Nhập số điện thoại'}
-              onChangeText={text => this.setState({sdt: text})}
+              onChangeText={(text) => this.setState({sdt: text})}
               value={this.state.sdt}
             />
           </View>
@@ -136,7 +146,7 @@ export default class sigin extends Component {
             <TextInput
               style={styles.textInputIn}
               placeholder={'Nhập email'}
-              onChangeText={text => this.setState({email: text})}
+              onChangeText={(text) => this.setState({email: text})}
               value={this.state.email}
               keyboardType="email-address"
             />
@@ -145,7 +155,7 @@ export default class sigin extends Component {
             <TextInput
               style={styles.textInputInPass}
               placeholder={'Nhập mật khẩu'}
-              onChangeText={text => this.setState({matkhau: text})}
+              onChangeText={(text) => this.setState({matkhau: text})}
               value={this.state.matkhau}
               secureTextEntry={this.state.hindPass}
             />
@@ -162,7 +172,7 @@ export default class sigin extends Component {
             <TextInput
               style={styles.textInputInPass}
               placeholder={'Nhập lại mật khẩu'}
-              onChangeText={text => this.setState({matkhau2: text})}
+              onChangeText={(text) => this.setState({matkhau2: text})}
               value={this.state.matkhau2}
               secureTextEntry={this.state.hindPassRe}
             />

@@ -52,11 +52,11 @@ class home extends Component {
     this.refreshDataFromServer();
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   };
   componentDidUpdate(preProps, preState, a) {
     const {id} = this.state;
@@ -68,35 +68,35 @@ class home extends Component {
     this.setState({refreshing: true});
     const {id} = this.state;
     getUserByID(id)
-      .then(resName => resName[0]['SoDuTK'])
-      .then(resJSON => {
+      .then((resName) => resName[0]['SoDuTK'])
+      .then((resJSON) => {
         this.setState({sodu: resJSON});
         this.setState({refreshing: false});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   };
   refreshDataFromServer = () => {
     this.setState({refreshing: true});
     getBXHFromServer()
-      .then(res => res['message'])
-      .then(result => {
+      .then((res) => res['message'])
+      .then((result) => {
         if (result === 'No post found') {
           this.setState({bxhError: true});
           this.setState({refreshing: false});
         } else {
           this.setState({bxhError: false});
           getBXHFromServer()
-            .then(bxh => {
+            .then((bxh) => {
               this.setState({bxhFromServer: bxh});
               this.setState({refreshing: false});
             })
-            .catch(error => {
+            .catch((error) => {
               this.setState({bxhFromServer: []});
               this.setState({refreshing: false});
             });
         }
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   };
   onRefresh = () => {
     this.refreshDataFromServer();
@@ -106,18 +106,18 @@ class home extends Component {
     Alert.alert('Notice!', 'Khảo sát!');
   }
 
-  diemdanh() {
+  diemdanhF() {
     const {id} = this.state;
     diemdanh(id)
-      .then(resJSON => resJSON['message'])
-      .then(res => {
+      .then((resJSON) => resJSON['message'])
+      .then((res) => {
         if (res === 'Success') {
           Alert.alert('Notice!', 'Điểm danh thành công!');
         } else {
           Alert.alert('Error!', 'Đã hết lượt điểm danh trong ngày!');
         }
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   }
   render() {
     return (
@@ -143,7 +143,7 @@ class home extends Component {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={this.diemdanh.bind(this)}
+            onPress={this.diemdanhF.bind(this)}
             style={styles.khaosat}>
             <View style={styles.khaosat}>
               <AntDesign name={'profile'} size={wp('5%')} color={'#AE1F17'} />
@@ -191,7 +191,7 @@ class home extends Component {
                   <Text style={styles.txtBxhError}>{item.Result}</Text>
                 </View>
               )}
-              keyExtractor={item => item.id}
+              keyExtractor={(item) => item.id}
               refreshControl={
                 <RefreshControl
                   refreshing={this.state.refreshing}

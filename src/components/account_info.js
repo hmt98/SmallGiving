@@ -24,6 +24,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import getUserByToken from '../api/getUserByToken';
 import getUserByID from '../api/getUserByID';
 import updateInfor from '../api/updateInfor';
+import updateInforWay4 from '../way4/updateinfor';
+
 export default class account_info extends Component {
   static navigationOptions = ({navigation}) => {
     return {
@@ -48,6 +50,7 @@ export default class account_info extends Component {
       pass: '',
       ngaysinh: '',
       sdt: '',
+      sdtW4: '',
       email: '',
       stk: '',
       isLoading: false,
@@ -57,11 +60,11 @@ export default class account_info extends Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   };
@@ -76,67 +79,79 @@ export default class account_info extends Component {
   getdata() {
     const {id} = this.state;
     getUserByID(id)
-      .then(resName => resName[0]['TenNguoiDung'])
-      .then(resJSON => {
+      .then((resName) => resName[0]['TenNguoiDung'])
+      .then((resJSON) => {
         this.setState({name: resJSON});
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
 
     getUserByID(id)
-      .then(resPass => resPass[0]['MatKhau'])
-      .then(resJSON => {
+      .then((resPass) => resPass[0]['MatKhau'])
+      .then((resJSON) => {
         this.setState({pass: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then(resSDT => resSDT[0]['SDT'])
-      .then(resJSON => {
+      .then((resSDT) => resSDT[0]['SDT'])
+      .then((resJSON) => {
         this.setState({sdt: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then(resEmail => resEmail[0]['Email'])
-      .then(resJSON => {
+      .then((resEmail) => resEmail[0]['Email'])
+      .then((resJSON) => {
         this.setState({email: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then(resDate => resDate[0]['NgaySinh'])
-      .then(resJSON => {
+      .then((resDate) => resDate[0]['NgaySinh'])
+      .then((resJSON) => {
         this.setState({ngaysinh: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then(resSTK => resSTK[0]['STK'])
-      .then(resJSON => {
+      .then((resSTK) => resSTK[0]['STK'])
+      .then((resJSON) => {
         this.setState({stk: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   }
 
   boqua() {
     this.getdata();
   }
 
+  onSuccessW4() {
+    const {sdt, name} = this.state;
+    updateInforWay4(sdt, name)
+      .then((res) => res['message'])
+      .then((result) => {
+        console.log(result);
+        if (result === 'success') return this.onSuccess();
+        else this.onFail();
+      })
+      .catch((error) => {
+        this.onFailNetWork(error);
+      });
+  }
   onSuccess() {
     this.setState({isLoading: false});
     Alert.alert('Cập nhật thành công!');
     this.getdata();
   }
-
   onFail() {
     this.setState({isLoading: false});
     Alert.alert('Error!', 'Thông tin bạn điền không hợp lệ!');
   }
 
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại');
     this.setState({isLoading: false});
   }
 
@@ -144,14 +159,14 @@ export default class account_info extends Component {
     const {id, name, pass, ngaysinh, stk} = this.state;
     this.setState({isLoading: true});
     updateInfor(id, name, pass, ngaysinh, stk)
-      .then(res => res['message'])
-      .then(result => {
+      .then((res) => res['message'])
+      .then((result) => {
         console.log(result);
-        if (result === 'Success') return this.onSuccess();
+        if (result === 'Success') return this.onSuccessW4();
         else this.onFail();
       })
-      .catch(error => {
-        this.onFailNetWork(error);
+      .catch(() => {
+        this.onFailNetWork();
       });
   }
 
@@ -167,8 +182,8 @@ export default class account_info extends Component {
                 <View style={styles.profileName}>
                   <TextInput
                     style={styles.profileNameInput}
-                    ref={view => (this.textInput_name = view)}
-                    onChangeText={text => this.setState({name: text})}
+                    ref={(view) => (this.textInput_name = view)}
+                    onChangeText={(text) => this.setState({name: text})}
                     value={this.state.name}
                   />
                 </View>
@@ -187,7 +202,6 @@ export default class account_info extends Component {
             </View>
           </ImageBackground>
         </View>
-
         <KeyboardAvoidingView
           behavior="position"
           keyboardVerticalOffset={20}
@@ -197,7 +211,7 @@ export default class account_info extends Component {
               <Text style={styles.txtNameCol}>SĐT</Text>
             </View>
             <View style={styles.nameInput}>
-              <Text style={[{fontSize: f(1.8)}]}>{this.state.sdt}******</Text>
+              <Text style={[{fontSize: f(1.8)}]}>{this.state.sdt}</Text>
             </View>
             <View style={styles.btnEdit} />
           </View>
@@ -219,8 +233,8 @@ export default class account_info extends Component {
             <View style={styles.nameInput}>
               <TextInput
                 style={[{fontSize: f(1.8)}]}
-                ref={view => (this.textInput_date = view)}
-                onChangeText={text => this.setState({ngaysinh: text})}
+                ref={(view) => (this.textInput_date = view)}
+                onChangeText={(text) => this.setState({ngaysinh: text})}
                 value={this.state.ngaysinh}
               />
             </View>
@@ -237,8 +251,8 @@ export default class account_info extends Component {
             <View style={styles.nameInput}>
               <TextInput
                 style={[{fontSize: f(1.8)}]}
-                ref={view => (this.textInput_stk = view)}
-                onChangeText={text => this.setState({stk: text})}
+                ref={(view) => (this.textInput_stk = view)}
+                onChangeText={(text) => this.setState({stk: text})}
                 value={this.state.stk}
               />
             </View>
