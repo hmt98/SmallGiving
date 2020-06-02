@@ -25,12 +25,14 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import getUserByToken from '../api/getUserByToken';
 import getUserByID from '../api/getUserByID';
+import getmoney from '../way4/getmoney';
 export default class account extends Component {
   constructor(props) {
     super(props);
     this.state = {
       id: '',
       name: '',
+      sdt: '',
       sodu: '',
       refreshing: false,
     };
@@ -39,37 +41,42 @@ export default class account extends Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
-        this.setState({id: resJSON});
+      .then((resSDT) => resSDT['SDT'])
+      .then((resJSON) => {
+        this.setState({sdt: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   };
 
   componentDidUpdate(preProps, preState, a) {
-    const {id} = this.state;
-    if (preState.id !== id) {
+    const {sdt} = this.state;
+    if (preState.sdt !== sdt) {
       this.getData();
     }
   }
 
   getData = () => {
     this.setState({refreshing: true});
-    const {id} = this.state;
-    getUserByID(id)
-      .then(resName => resName[0]['TenNguoiDung'])
-      .then(resJSON => {
-        this.setState({name: resJSON});
+    const {sdt} = this.state;
+    getmoney(sdt)
+      .then((resAvai) => resAvai['Available'])
+      .then((resJSON) => {
+        this.setState({sodu: resJSON, refreshing: false});
       })
-      .catch(error => console.log(error));
+      .catch((error) => {
+        this.setState({refreshing: false});
+        console.log(error);
+      });
 
-    getUserByID(id)
-      .then(resSodu => resSodu[0]['SoDuTK'])
-      .then(resJSON => {
-        this.setState({sodu: resJSON});
+    getmoney(sdt)
+      .then((resAvai) => resAvai['ContractName'])
+      .then((resJSON) => {
+        this.setState({name: resJSON, refreshing: false});
       })
-      .catch(error => console.log(error));
-    this.setState({refreshing: false});
+      .catch((error) => {
+        this.setState({refreshing: false});
+        console.log(error);
+      });
   };
 
   onRefresh = () => {

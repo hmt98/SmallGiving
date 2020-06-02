@@ -79,44 +79,44 @@ export default class account_info extends Component {
   getdata() {
     const {id} = this.state;
     getUserByID(id)
-      .then((resName) => resName[0]['TenNguoiDung'])
+      .then((resName) => resName['TenNguoiDung'])
       .then((resJSON) => {
         this.setState({name: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
 
     getUserByID(id)
-      .then((resPass) => resPass[0]['MatKhau'])
+      .then((resPass) => resPass['MatKhau'])
       .then((resJSON) => {
         this.setState({pass: resJSON});
       })
       .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then((resSDT) => resSDT[0]['SDT'])
+      .then((resSDT) => resSDT['SDT'])
       .then((resJSON) => {
         this.setState({sdt: resJSON});
       })
       .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then((resEmail) => resEmail[0]['Email'])
+      .then((resEmail) => resEmail['Email'])
       .then((resJSON) => {
         this.setState({email: resJSON});
       })
       .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then((resDate) => resDate[0]['NgaySinh'])
+      .then((resDate) => resDate['NgaySinh'])
       .then((resJSON) => {
         this.setState({ngaysinh: resJSON});
       })
       .catch((error) => console.log(error));
 
     getUserByID(id)
-      .then((resSTK) => resSTK[0]['STK'])
+      .then((resSTK) => resSTK['STK'])
       .then((resJSON) => {
         this.setState({stk: resJSON});
       })
@@ -154,7 +154,6 @@ export default class account_info extends Component {
     Alert.alert('Có lỗi xảy ra! Vui lòng thử lại');
     this.setState({isLoading: false});
   }
-
   update() {
     const {id, name, pass, ngaysinh, stk} = this.state;
     this.setState({isLoading: true});

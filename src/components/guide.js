@@ -49,11 +49,11 @@ export default class Guide extends React.Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
   };
 
   componentDidUpdate(preProps, preState, a) {
@@ -67,23 +67,11 @@ export default class Guide extends React.Component {
     this.setState({refreshing: true});
     const {id} = this.state;
     getUserByID(id)
-      .then(resName => resName[0]['TenNguoiDung'])
-      .then(resJSON => {
+      .then((resName) => resName['TenNguoiDung'])
+      .then((resJSON) => {
         this.setState({name: resJSON});
       })
-      .catch(error => console.log(error));
-    getUserByID(id)
-      .then(resName => resName[0]['SDT'])
-      .then(resJSON => {
-        this.setState({sdt: resJSON});
-      })
-      .catch(error => console.log(error));
-    getUserByID(id)
-      .then(resName => resName[0]['Email'])
-      .then(resJSON => {
-        this.setState({email: resJSON});
-      })
-      .catch(error => console.log(error));
+      .catch((error) => console.log(error));
     this.setState({refreshing: false});
   }
   onRefresh = () => {

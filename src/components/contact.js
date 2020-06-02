@@ -69,19 +69,17 @@ export default class Contact extends Component {
   }
 
   getdata() {
-    this.setState({refreshing: true, isLoading: false});
-    //this.setState({isLoading: false});
+    this.setState({refreshing: true, isLoading: true});
     const {id} = this.state;
     getUserByID(id)
-      .then((resName) => resName[0]['TenNguoiDung'])
+      .then((resName) => resName['TenNguoiDung'])
       .then((resJSON) => {
         this.setState({name: resJSON, refreshing: false});
       })
       .catch((error) => {
         this.onFailNetWork(error);
       });
-    //this.setState({refreshing: false});
-    //this.setState({isLoading: false});
+    this.setState({refreshing: false, isLoading: false});
   }
 
   onSuccess() {

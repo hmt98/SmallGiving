@@ -25,7 +25,7 @@ import {
 } from 'react-native-responsive-screen';
 import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
 import getUserByToken from '../api/getUserByToken';
-import getUserByID from '../api/getUserByID';
+import getmoney from '../way4/getmoney';
 import diemdanh from '../api/diemdanh';
 const DATA = [
   {
@@ -43,7 +43,7 @@ class home extends Component {
       networkError: false,
       userName: '',
       bxhError: false,
-      id: '',
+      sdt: '',
       sodu: '',
     };
   }
@@ -52,28 +52,32 @@ class home extends Component {
     this.refreshDataFromServer();
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then((resID) => resID['idNguoiDung'])
+      .then((resSDT) => resSDT['SDT'])
       .then((resJSON) => {
-        this.setState({id: resJSON});
+        this.setState({sdt: resJSON});
       })
       .catch((error) => console.log(error));
   };
+
   componentDidUpdate(preProps, preState, a) {
-    const {id} = this.state;
-    if (preState.id !== id) {
+    const {sdt} = this.state;
+    if (preState.sdt !== sdt) {
       this.getData();
     }
   }
+
   getData = () => {
     this.setState({refreshing: true});
-    const {id} = this.state;
-    getUserByID(id)
-      .then((resName) => resName[0]['SoDuTK'])
+    const {sdt} = this.state;
+    getmoney(sdt)
+      .then((resAvai) => resAvai['Available'])
       .then((resJSON) => {
-        this.setState({sodu: resJSON});
-        this.setState({refreshing: false});
+        this.setState({sodu: resJSON, refreshing: false});
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        this.setState({refreshing: false});
+        console.log(error);
+      });
   };
   refreshDataFromServer = () => {
     this.setState({refreshing: true});

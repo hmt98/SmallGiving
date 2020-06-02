@@ -29,7 +29,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import coin from '../../images/coin.png';
 import getUserByToken from '../api/getUserByToken';
 import getUserByID from '../api/getUserByID';
+import theodoi from '../api/theodoi';
+import botheodoi from '../api/botheodoi';
 import quyengop from '../api/quyengop';
+import getmoney from '../way4/getmoney';
 
 export default class Donate_infor_items extends Component {
   constructor(props) {
@@ -38,8 +41,10 @@ export default class Donate_infor_items extends Component {
       follow: false,
       xValue: new Animated.Value(height),
       id: '',
+      sdt: '',
       sodu: '',
       sotien: null,
+      soduTK: '',
       isLoading: false,
     };
   }
@@ -47,13 +52,39 @@ export default class Donate_infor_items extends Component {
   follow = () => {
     this.setState({follow: !this.state.follow});
     if (!this.state.follow) {
-      Alert.alert('Notice!', 'Cảm ơn bạn đã quan tâm đến chương trình!');
+      this.theodoiIn();
     } else {
-      Alert.alert('Notice!', 'Đã bỏ theo dõi!');
+      this.theodoiOut();
     }
     this.bell.shake(2000);
   };
 
+  theodoiIn = () => {
+    const {id} = this.state;
+    const {item} = this.props;
+    theodoi(id, item.idHoatDong)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'success') {
+          Alert.alert('Notice!', 'Đã theo dõi!');
+        } else {
+          Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại!');
+        }
+      });
+  };
+  theodoiOut = () => {
+    const {id} = this.state;
+    const {item} = this.props;
+    botheodoi(id, item.idHoatDong)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'success') {
+          Alert.alert('Notice!', 'Đã bỏ theo dõi!');
+        } else {
+          Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại!');
+        }
+      });
+  };
   _goAnimation = () => {
     Animated.timing(this.state.xValue, {
       toValue: 0,
@@ -76,6 +107,14 @@ export default class Donate_infor_items extends Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
+      .then((resSDT) => resSDT['SDT'])
+      .then((resJSON) => {
+        this.setState({sdt: resJSON});
+      })
+      .catch((error) => {
+        this.onFailNetWork(error);
+      });
+    getUserByToken(tokenAsync)
       .then((resID) => resID['idNguoiDung'])
       .then((resJSON) => {
         this.setState({id: resJSON});
@@ -86,18 +125,35 @@ export default class Donate_infor_items extends Component {
   };
 
   componentDidUpdate(preProps, preState, a) {
-    const {id} = this.state;
-    if (preState.id !== id) {
+    const {sdt, id} = this.state;
+    if (preState.sdt !== sdt) {
       this.getdata();
+    }
+    if (preState.id !== id) {
+      this.getdataTD();
     }
   }
 
-  getdata() {
+  getdataTD() {
+    const {item} = this.props;
     const {id} = this.state;
-    getUserByID(id)
-      .then((resSodu) => resSodu[0]['SoDuTK'])
+  }
+
+  getdata() {
+    const {item} = this.props;
+    const {sdt} = this.state;
+    getmoney(sdt)
+      .then((resSodu) => resSodu['Available'])
       .then((resJSON) => {
         this.setState({sodu: resJSON});
+      })
+      .catch((error) => {
+        this.onFailNetWork(error);
+      });
+    getmoney(item.idHoatDong)
+      .then((resSoduTK) => resSoduTK['Available'])
+      .then((resJSON) => {
+        this.setState({soduTK: resJSON});
       })
       .catch((error) => {
         this.onFailNetWork(error);
@@ -117,7 +173,7 @@ export default class Donate_infor_items extends Component {
   }
 
   quyengop() {
-    const {id, sodu, sotien} = this.state;
+    const {sdt, sodu, sotien} = this.state;
     if (sotien === null) {
       Alert.alert('Error!', 'Vui lòng nhập số tiền!');
       return;
@@ -146,9 +202,9 @@ export default class Donate_infor_items extends Component {
     this.setState({isLoading: false});
   }
   donate() {
-    const {id, sotien} = this.state;
+    const {sdt, sotien} = this.state;
     const {item} = this.props;
-    quyengop(id, item.idHoatDong, sotien)
+    quyengop(sdt, item.idHoatDong, sotien)
       .then((res) => res['message'])
       .then((result) => {
         if (result === 'success') return this.onSuccess();
@@ -190,7 +246,7 @@ export default class Donate_infor_items extends Component {
                     <FontAwesome
                       name={'bell'}
                       size={wp('6%')}
-                      color={this.state.follow ? '#AE1F17' : '#545454'}
+                      color={'#AE1F17'}
                     />
                   </Animatable.View>
                 </TouchableOpacity>
@@ -207,7 +263,7 @@ export default class Donate_infor_items extends Component {
               </Text>
             </View>
             <Progress.Bar
-              progress={item.SoDuTK / item.ChiDK}
+              progress={this.state.soduTK / item.ChiDK}
               width={wp('85%')}
               height={hp('4%')}
               color={'#AE1F17'}
@@ -216,7 +272,7 @@ export default class Donate_infor_items extends Component {
             />
             <View style={styles.money}>
               <View style={styles.moneyStart}>
-                <Text style={styles.txtMoneyStart}>{item.SoDuTK}</Text>
+                <Text style={styles.txtMoneyStart}>{this.state.soduTK}</Text>
               </View>
               <View style={styles.moneyEnd}>
                 <Text style={styles.txtMoneyEnd}>{item.ChiDK}</Text>
@@ -226,7 +282,7 @@ export default class Donate_infor_items extends Component {
               <TouchableOpacity
                 onPress={() => {
                   this.quyengopAnimate();
-                  // this.textInput_money.focus();
+                  this.textInput_money.focus();
                 }}
                 style={styles.btnQuyengop}>
                 <Text style={styles.ttQuyengop}>Quyên góp</Text>
@@ -270,7 +326,7 @@ export default class Donate_infor_items extends Component {
               </Text>
               <Text style={styles.txtSoTien}>{this.state.sodu} VNĐ</Text>
               <TextInput
-                // ref={(view) => (this.textInput_money = view)}
+                ref={(view) => (this.textInput_money = view)}
                 style={styles.ipTien}
                 onChangeText={(text) => this.setState({sotien: text})}
                 value={this.state.sotien}

@@ -48,7 +48,7 @@ export default class menu extends React.Component {
   getdata() {
     const {id} = this.state;
     getUserByID(id)
-      .then((resName) => resName[0]['TenNguoiDung'])
+      .then((resName) => resName['TenNguoiDung'])
       .then((resJSON) => {
         this.setState({name: resJSON});
       })

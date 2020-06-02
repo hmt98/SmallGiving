@@ -5,7 +5,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import loading from '../../images/loading.gif';
+// import loading from '../../images/loading.gif';
+import loading from '../../images/loading1.png';
 export default class login extends Component {
   constructor(props) {
     super(props);
@@ -61,8 +62,13 @@ const styles = StyleSheet.create({
   txtLoginStatus: {
     fontSize: f(2),
   },
+  // imgLoad: {
+  //   height: hp('10%'),
+  //   width: wp('10%'),
+  // },
   imgLoad: {
-    height: hp('10%'),
-    width: wp('10%'),
+    height: hp('4%'),
+    width: wp('8%'),
+    margin: f(2),
   },
 });

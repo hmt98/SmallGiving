@@ -46,15 +46,15 @@ export default class forgot_pass extends Component {
     }
     this.setState({isLoading: true});
     checkpass(email, sdt)
-      .then(res => res['message'])
-      .then(result => {
+      .then((res) => res['message'])
+      .then((result) => {
         if (result === 'Tai khoan khong ton tai') {
           return this.onFail();
         } else {
           this.onSuccess(result);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         this.onFailNetWork(error);
       });
   }
@@ -98,7 +98,7 @@ export default class forgot_pass extends Component {
             <TextInput
               style={styles.textInputIn}
               placeholder={'Nhập số điện thoại'}
-              onChangeText={text => this.setState({sdt: text})}
+              onChangeText={(text) => this.setState({sdt: text})}
               value={this.state.sdt}
             />
           </View>
@@ -106,7 +106,7 @@ export default class forgot_pass extends Component {
             <TextInput
               style={styles.textInputIn}
               placeholder={'Nhập email'}
-              onChangeText={text => this.setState({email: text})}
+              onChangeText={(text) => this.setState({email: text})}
               value={this.state.email}
               keyboardType="email-address"
             />
