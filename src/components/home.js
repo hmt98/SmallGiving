@@ -43,6 +43,7 @@ class home extends Component {
       networkError: false,
       userName: '',
       bxhError: false,
+      id: '',
       sdt: '',
       sodu: '',
     };
@@ -57,15 +58,29 @@ class home extends Component {
         this.setState({sdt: resJSON});
       })
       .catch((error) => console.log(error));
+    getUserByToken(tokenAsync)
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
+        this.setState({id: resJSON});
+      })
+      .catch((error) => {
+        this.onFailNetWork(error);
+      });
   };
 
   componentDidUpdate(preProps, preState, a) {
-    const {sdt} = this.state;
+    const {sdt, id} = this.state;
     if (preState.sdt !== sdt) {
       this.getData();
     }
+    if (preState.id !== id) {
+      this.getdataTD();
+    }
   }
-
+  getdataTD() {
+    const {item} = this.props;
+    const {id} = this.state;
+  }
   getData = () => {
     this.setState({refreshing: true});
     const {sdt} = this.state;
@@ -154,7 +169,9 @@ class home extends Component {
               <Text style={styles.txtBetween}>Điểm danh</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.khaosat}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Notice')}
+            style={styles.khaosat}>
             <View style={styles.khaosat}>
               <FontAwesome name={'bell'} size={wp('5%')} color={'#AE1F17'} />
               <Text style={styles.txtBetween}>Thông báo</Text>

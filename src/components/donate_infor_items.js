@@ -33,6 +33,7 @@ import theodoi from '../api/theodoi';
 import botheodoi from '../api/botheodoi';
 import quyengop from '../api/quyengop';
 import getmoney from '../way4/getmoney';
+import quyengopW4 from '../way4/donate';
 
 export default class Donate_infor_items extends Component {
   constructor(props) {
@@ -173,7 +174,7 @@ export default class Donate_infor_items extends Component {
   }
 
   quyengop() {
-    const {sdt, sodu, sotien} = this.state;
+    const {sodu, sotien} = this.state;
     if (sotien === null) {
       Alert.alert('Error!', 'Vui lòng nhập số tiền!');
       return;

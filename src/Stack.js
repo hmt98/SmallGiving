@@ -25,7 +25,7 @@ import forgot_pass from './components/forgot_pass';
 import reset_pass from './components/reset_pass';
 import otp from './components/otp';
 import donate_infor from './components/donate_infor';
-// import donate from './components/donate';
+import notice from './components/notice';
 import news_details from './components/news_detail';
 import home from './components/home';
 import menu from './components/menu';
@@ -244,6 +244,19 @@ const OTP = createStackNavigator({
   },
 });
 
+const Notice = createStackNavigator({
+  Notice: {
+    screen: notice,
+    navigationOptions: {
+      headerTitle: 'Thông Báo',
+      headerTitleAlign: 'center',
+      headerTitleStyle: {fontSize: f(2.5), color: 'white'},
+      headerStyle: {backgroundColor: '#AE1F17', height: hp('8%')},
+    },
+  },
+  // initialRouteName: 'Account',
+});
+
 const Contact = createStackNavigator({
   Contact: {
     screen: contact,
@@ -288,6 +301,9 @@ const Menutab = createDrawerNavigator(
     },
     History: {
       screen: History,
+    },
+    Notice: {
+      screen: Notice,
     },
   },
   {
