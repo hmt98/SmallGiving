@@ -57,7 +57,7 @@ export default class Contact extends Component {
         this.setState({id: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   };
 
@@ -77,7 +77,7 @@ export default class Contact extends Component {
         this.setState({name: resJSON, refreshing: false});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
     this.setState({refreshing: false, isLoading: false});
   }
@@ -96,8 +96,8 @@ export default class Contact extends Component {
   onRefresh = () => {
     this.getdata();
   };
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại!');
     this.setState({isLoading: false});
   }
   gopy() {
@@ -114,7 +114,7 @@ export default class Contact extends Component {
           else this.onFail();
         })
         .catch((error) => {
-          this.onFailNetWork(error);
+          this.onFailNetWork();
         });
     }
   }

@@ -65,7 +65,7 @@ export default class account_info extends Component {
         this.setState({id: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   };
 
@@ -137,7 +137,7 @@ export default class account_info extends Component {
         else this.onFail();
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   }
   onSuccess() {

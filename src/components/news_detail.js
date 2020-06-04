@@ -27,6 +27,8 @@ import {
 } from 'react-native-responsive-screen';
 import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
 import quyengop from '../api/quyengop';
+import getmoney from '../way4/getmoney';
+import quyengopW4 from '../way4/donate';
 import Loading from '../loading/myIsLoading';
 export default class news_details extends Component {
   constructor(props) {
@@ -34,8 +36,10 @@ export default class news_details extends Component {
     this.state = {
       xValue: new Animated.Value(width),
       id: '',
+      sdt: '',
       sodu: '',
       sotien: null,
+      soduHD: '',
       isLoading: false,
     };
   }
@@ -70,31 +74,56 @@ export default class news_details extends Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
+      .then((resSDT) => resSDT['SDT'])
+      .then((resJSON) => {
+        this.setState({sdt: resJSON});
+      })
+      .catch((error) => {
+        this.onFailNetWork();
+      });
+    getUserByToken(tokenAsync)
       .then((resID) => resID['idNguoiDung'])
       .then((resJSON) => {
         this.setState({id: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   };
 
   componentDidUpdate(preProps, preState, a) {
-    const {id} = this.state;
-    if (preState.id !== id) {
+    const {sdt, id} = this.state;
+    if (preState.sdt !== sdt) {
       this.getdata();
+    }
+    if (preState.id !== id) {
+      this.getdataTD();
     }
   }
 
-  getdata() {
+  getdataTD() {
+    const item = this.props.navigation.state.params.item;
     const {id} = this.state;
-    getUserByID(id)
-      .then((resSodu) => resSodu[0]['SoDuTK'])
+  }
+
+  getdata() {
+    const item = this.props.navigation.state.params.item;
+    const {sdt} = this.state;
+    getmoney(sdt)
+      .then((resSodu) => resSodu['Available'])
       .then((resJSON) => {
         this.setState({sodu: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
+      });
+    getmoney(item.idHoatDong)
+      .then((resSoduHD) => resSoduHD['Available'])
+      .then((resJSON) => {
+        this.setState({soduHD: resJSON});
+      })
+      .catch((error) => {
+        this.onFailNetWork();
       });
   }
 
@@ -128,15 +157,32 @@ export default class news_details extends Component {
     }
   }
   onSuccess() {
+    const {sdt, sotien} = this.state;
+    const item = this.props.navigation.state.params.item;
+    quyengopW4(sdt, item.idHoatDong, sotien)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'success') return this.onSuccessW4();
+        else this.onFailW4();
+      })
+      .catch((error) => {
+        Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại');
+      });
+  }
+  onSuccessW4() {
     Alert.alert('Quyên góp thành công!', 'Cảm ơn tấm lòng hảo tâm của bạn!');
     this.setState({isLoading: false, sotien: null});
   }
   onFail() {
     this.setState({isLoading: false});
-    Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại!');
+    Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại');
   }
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  onFailW4() {
+    this.setState({isLoading: false});
+    Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại');
+  }
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại!');
     this.setState({isLoading: false});
   }
   donate() {
@@ -149,7 +195,7 @@ export default class news_details extends Component {
         else this.onFail();
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại!');
       });
   }
   render() {

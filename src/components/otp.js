@@ -52,12 +52,12 @@ export default class otp extends Component {
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
+      .then((resID) => resID['idNguoiDung'])
+      .then((resJSON) => {
         this.setState({id: resJSON});
       })
-      .catch(error => {
-        this.onFailNetWork(error);
+      .catch((error) => {
+        this.onFailNetWork();
       });
   };
   showPassOld() {
@@ -91,13 +91,13 @@ export default class otp extends Component {
     }
     this.setState({isLoading: true});
     changepass(id, matkhaucu, matkhaumoi)
-      .then(res => res['message'])
-      .then(result => {
+      .then((res) => res['message'])
+      .then((result) => {
         if (result === 'Success') return this.onSuccess();
         else this.onFail();
       })
-      .catch(error => {
-        this.onFailNetWork(error);
+      .catch((error) => {
+        this.onFailNetWork();
       });
   }
   onSuccess() {
@@ -112,8 +112,8 @@ export default class otp extends Component {
     Alert.alert('Error!', 'Mật khẩu không chính xác!');
     this.setState({isLoading: false});
   }
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại!');
     this.setState({isLoading: false});
   }
   render() {
@@ -140,7 +140,7 @@ export default class otp extends Component {
             <TextInput
               style={styles.textInputInPass}
               placeholder={'Nhập mật khẩu cũ'}
-              onChangeText={text => this.setState({matkhaucu: text})}
+              onChangeText={(text) => this.setState({matkhaucu: text})}
               value={this.state.matkhaucu}
               secureTextEntry={this.state.hindPassOld}
             />
@@ -157,7 +157,7 @@ export default class otp extends Component {
             <TextInput
               style={styles.textInputInPass}
               placeholder={'Nhập mật khẩu mới'}
-              onChangeText={text => this.setState({matkhaumoi: text})}
+              onChangeText={(text) => this.setState({matkhaumoi: text})}
               value={this.state.matkhaumoi}
               secureTextEntry={this.state.hindPassNew}
             />
@@ -174,7 +174,7 @@ export default class otp extends Component {
             <TextInput
               style={styles.textInputInPass}
               placeholder={'Nhập lại mật khẩu mới'}
-              onChangeText={text => this.setState({matkhaumoiRe: text})}
+              onChangeText={(text) => this.setState({matkhaumoiRe: text})}
               value={this.state.matkhaumoiRe}
               secureTextEntry={this.state.hindPassNewRe}
             />

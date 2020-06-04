@@ -21,7 +21,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 const DATA = [
   {
     id: '1',
-    Result: 'Chưa có dữ liệu',
+    Result: 'Chưa có thông báo',
   },
 ];
 export default class notice extends Component {

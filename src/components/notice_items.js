@@ -83,18 +83,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imgAvatar: {
-    height: hp('10%'),
-    width: wp('20%'),
+    height: hp('5%'),
+    width: wp('10%'),
   },
   tentin: {
     fontWeight: 'bold',
     marginTop: '2%',
     color: '#545454',
     textTransform: 'uppercase',
-    fontSize: f(2),
+    fontSize: f(1.5),
   },
   ngaygio: {
-    fontSize: f(1.8),
+    fontSize: f(1.5),
   },
   mainWidth: {
     width: wp('96%'),
@@ -102,17 +102,6 @@ const styles = StyleSheet.create({
   },
   noidung: {
     textAlign: 'justify',
-    fontSize: f(1.8),
-  },
-  anh: {
-    height: hp('30%'),
-    width: wp('95%'),
-    alignSelf: 'center',
-    margin: '2%',
-  },
-  xemthem: {
-    fontWeight: 'bold',
-    color: '#426ec7',
     fontSize: f(1.8),
   },
 });

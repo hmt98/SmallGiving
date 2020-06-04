@@ -64,10 +64,13 @@ class home extends Component {
         this.setState({id: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   };
-
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại');
+    this.setState({isLoading: false});
+  }
   componentDidUpdate(preProps, preState, a) {
     const {sdt, id} = this.state;
     if (preState.sdt !== sdt) {
@@ -91,7 +94,7 @@ class home extends Component {
       })
       .catch((error) => {
         this.setState({refreshing: false});
-        console.log(error);
+        this.onFailNetWork();
       });
   };
   refreshDataFromServer = () => {
@@ -100,18 +103,15 @@ class home extends Component {
       .then((res) => res['message'])
       .then((result) => {
         if (result === 'No post found') {
-          this.setState({bxhError: true});
-          this.setState({refreshing: false});
+          this.setState({bxhError: true, refreshing: false});
         } else {
           this.setState({bxhError: false});
           getBXHFromServer()
             .then((bxh) => {
-              this.setState({bxhFromServer: bxh});
-              this.setState({refreshing: false});
+              this.setState({bxhFromServer: bxh, refreshing: false});
             })
             .catch((error) => {
-              this.setState({bxhFromServer: []});
-              this.setState({refreshing: false});
+              this.setState({bxhFromServer: [], refreshing: false});
             });
         }
       })

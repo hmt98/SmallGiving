@@ -55,7 +55,7 @@ export default class forgot_pass extends Component {
         }
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   }
   onSuccess(pass) {
@@ -68,8 +68,8 @@ export default class forgot_pass extends Component {
     this.setState({isLoading: true});
     Alert.alert('Error!', 'Email hoặc SĐT không đúng! Vui lòng kiểm tra lại!');
   }
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại');
     this.setState({isLoading: false});
   }
   render() {

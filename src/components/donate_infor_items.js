@@ -45,7 +45,7 @@ export default class Donate_infor_items extends Component {
       sdt: '',
       sodu: '',
       sotien: null,
-      soduTK: '',
+      soduHD: '',
       isLoading: false,
     };
   }
@@ -96,7 +96,6 @@ export default class Donate_infor_items extends Component {
   };
 
   _backAnimation = () => {
-    // alert('Bấm');
     Animated.timing(this.state.xValue, {
       toValue: height,
       duration: 0,
@@ -113,7 +112,7 @@ export default class Donate_infor_items extends Component {
         this.setState({sdt: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
     getUserByToken(tokenAsync)
       .then((resID) => resID['idNguoiDung'])
@@ -121,7 +120,7 @@ export default class Donate_infor_items extends Component {
         this.setState({id: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   };
 
@@ -149,15 +148,15 @@ export default class Donate_infor_items extends Component {
         this.setState({sodu: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
     getmoney(item.idHoatDong)
-      .then((resSoduTK) => resSoduTK['Available'])
+      .then((resSoduHD) => resSoduHD['Available'])
       .then((resJSON) => {
-        this.setState({soduTK: resJSON});
+        this.setState({soduHD: resJSON});
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        this.onFailNetWork();
       });
   }
 
@@ -191,28 +190,45 @@ export default class Donate_infor_items extends Component {
     }
   }
   onSuccess() {
+    const {sdt, sotien} = this.state;
+    const {item} = this.props;
+    quyengopW4(sdt, item.idHoatDong, sotien)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'success') return this.onSuccessW4();
+        else this.onFailW4();
+      })
+      .catch((error) => {
+        Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại');
+      });
+  }
+  onSuccessW4() {
     Alert.alert('Quyên góp thành công!', 'Cảm ơn tấm lòng hảo tâm của bạn!');
     this.setState({isLoading: false, sotien: null});
   }
   onFail() {
     this.setState({isLoading: false});
-    Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại!');
+    Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại');
   }
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  onFailW4() {
+    this.setState({isLoading: false});
+    Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại');
+  }
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại!');
     this.setState({isLoading: false});
   }
   donate() {
-    const {sdt, sotien} = this.state;
+    const {id, sotien} = this.state;
     const {item} = this.props;
-    quyengop(sdt, item.idHoatDong, sotien)
+    quyengop(id, item.idHoatDong, sotien)
       .then((res) => res['message'])
       .then((result) => {
         if (result === 'success') return this.onSuccess();
         else this.onFail();
       })
       .catch((error) => {
-        this.onFailNetWork(error);
+        Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại!');
       });
   }
 
@@ -264,7 +280,7 @@ export default class Donate_infor_items extends Component {
               </Text>
             </View>
             <Progress.Bar
-              progress={this.state.soduTK / item.ChiDK}
+              progress={this.state.soduHD / item.ChiDK}
               width={wp('85%')}
               height={hp('4%')}
               color={'#AE1F17'}
@@ -273,7 +289,7 @@ export default class Donate_infor_items extends Component {
             />
             <View style={styles.money}>
               <View style={styles.moneyStart}>
-                <Text style={styles.txtMoneyStart}>{this.state.soduTK}</Text>
+                <Text style={styles.txtMoneyStart}>{this.state.soduHD}</Text>
               </View>
               <View style={styles.moneyEnd}>
                 <Text style={styles.txtMoneyEnd}>{item.ChiDK}</Text>

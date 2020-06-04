@@ -22,13 +22,11 @@ export default class blog extends Component {
   refreshDataFromServer = () => {
     this.setState({refreshing: true});
     getBlogFromServer()
-      .then(blog => {
-        this.setState({blogFromServer: blog});
-        this.setState({refreshing: false});
+      .then((blog) => {
+        this.setState({blogFromServer: blog, refreshing: false});
       })
-      .catch(error => {
-        this.setState({blogFromServer: []});
-        this.setState({refreshing: false});
+      .catch((error) => {
+        this.setState({blogFromServer: [], refreshing: false});
       });
   };
   onRefresh = () => {
