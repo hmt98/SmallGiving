@@ -39,7 +39,11 @@ export default class History_Item extends Component {
           </View>
         </View>
         <View style={styles.right}>
-          <Text style={[{color: this.state.tienvao ? 'green' : 'red'}]}>
+          <Text
+            style={[
+              {color: this.state.tienvao ? 'green' : 'red'},
+              {fontSize: f(2)},
+            ]}>
             {this.state.tienvao ? '+ ' : '- '}
             {item.TransAmount}
           </Text>

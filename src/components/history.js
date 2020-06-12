@@ -113,10 +113,42 @@ export default class history extends Component {
       .catch((error) => console.log(error));
   }
 
-  getdataA() {}
-  // onRefresh = () => {
-  //   this.getdata();
-  // };
+  getdataA() {
+    const {sdt, ngayBD, ngayKT} = this.state;
+    this.setState({isLoading: true});
+    getHistory(sdt, ngayBD, ngayKT)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'No post found') {
+          this.setState({
+            historyError: true,
+            refreshing: false,
+            isLoading: false,
+          });
+        } else {
+          this.setState({historyError: false});
+          getHistory(sdt, ngayBD, ngayKT)
+            .then((history) => {
+              this.setState({
+                historyFromServer: history,
+                refreshing: false,
+                isLoading: false,
+              });
+            })
+            .catch((error) => {
+              this.setState({
+                historyFromServer: [],
+                refreshing: false,
+                isLoading: false,
+              });
+            });
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+  onRefresh = () => {
+    this.getdata();
+  };
   onFailNetWork() {
     Alert.alert('Có lỗi xảy ra! Vui lòng thử lại!');
     this.setState({isLoading: false});
