@@ -12,73 +12,37 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
-import history from './history';
 var {width, height} = Dimensions.get('window');
 export default class History_Item extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      readfull: false,
-      naptien: true,
+      tienvao: false,
     };
   }
   render() {
     const item = this.props.item;
-    const historyIn = this.props.historyIn;
-    if (item.SoTienKS * 1 > 0) {
-      this.state.naptien = false;
+    if (item.TrangThai === 'Tien ra') {
+      this.state.tienvao = false;
+    }
+    if (item.TrangThai === 'Tien vao') {
+      this.state.tienvao = true;
     }
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.thoigian}>
-            <Text style={styles.txtThoigian}>{item.ThoiGianNap}</Text>
+        <View style={styles.left}>
+          <View style={styles.ngaychuyen}>
+            <Text style={styles.txtNgaychuyen}>{item.Ngaychuyen}</Text>
           </View>
-          <View style={styles.sotien}>
-            <Text
-              style={[
-                styles.txtSotien,
-                {color: historyIn ? 'green' : '#AE1F17'},
-              ]}>
-              {historyIn ? '+' : '-'}
-            </Text>
-            <Text
-              style={[
-                styles.txtSotien,
-                {color: historyIn ? 'green' : '#AE1F17'},
-              ]}>
-              {item.SoTienQG}
-            </Text>
-            <Text
-              style={[
-                styles.txtSotien,
-                {color: historyIn ? 'green' : '#AE1F17'},
-              ]}>
-              {item.SoTienNap}
-            </Text>
-            <Text
-              style={[
-                styles.txtSotien,
-                {color: historyIn ? 'green' : '#AE1F17'},
-              ]}>
-              {item.SoTienKS}
-            </Text>
+          <View style={styles.tengiaodich}>
+            <Text style={styles.txtTengiaodich}>{item.TenGiaoDich}</Text>
           </View>
         </View>
-        <View style={styles.noidung}>
-          {historyIn ? (
-            <Text style={[styles.txtNoidung]}>
-              {this.state.naptien ? 'Nạp tiền' : 'Làm phiếu khảo sát'}
-            </Text>
-          ) : (
-            <Text
-              eclipSizeMode={'tail'}
-              numberOfLines={1}
-              allowFontScaling={false}
-              style={[styles.txtNoidung]}>
-              Quyên góp: {item.TenHoatDong}
-            </Text>
-          )}
+        <View style={styles.right}>
+          <Text style={[{color: this.state.tienvao ? 'green' : 'red'}]}>
+            {this.state.tienvao ? '+ ' : '- '}
+            {item.TransAmount}
+          </Text>
         </View>
       </View>
     );
@@ -88,37 +52,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     borderBottomWidth: 1,
-    borderBottomColor: '#AE1F17',
-    // borderTopWidth: 1,
-    // borderTopColor: '#545454',
+    borderBottomColor: '#545454',
     height: hp('7%'),
-  },
-  header: {
     flexDirection: 'row',
-    marginTop: '1%',
   },
-  thoigian: {
-    flex: 5,
-    marginLeft: '2%',
+  ngaychuyen: {
+    margin: '1%',
   },
-  sotien: {
-    flex: 5,
-    flexDirection: 'row',
-    marginLeft: '10%',
+  tengiaodich: {
+    margin: '1%',
   },
-  txtThoigian: {
-    fontSize: f(2),
+  txtNgaychuyen: {
+    fontSize: f(1.8),
     color: '#545454',
   },
-  txtSotien: {
+  txtTengiaodich: {
     fontSize: f(2),
   },
-  noidung: {
-    marginLeft: '2%',
-    marginTop: '1%',
-    marginBottom: '1%',
+  left: {
+    flex: 5,
+    margin: '1%',
   },
-  txtNoidung: {
-    fontSize: f(2),
+  right: {
+    flex: 5,
+    justifyContent: 'center',
   },
 });

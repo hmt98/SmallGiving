@@ -8,18 +8,25 @@ import {
   AsyncStorage,
   Alert,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
-import getHistoryIn from '../api/getHistoryIn';
-import getHistoryOut from '../api/getHistoryOut';
+import getHistory from '../way4/getHistory';
 import getUserByToken from '../api/getUserByToken';
 import History_Item from './history_item';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Loading from '../loading/myIsLoading';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
-
+import DatePicker from 'react-native-datepicker';
+const DATA = [
+  {
+    id: '1',
+    Result: 'Không có bản ghi nào',
+  },
+];
 export default class history extends Component {
   static navigationOptions = ({navigation}) => {
     return {
@@ -38,127 +45,160 @@ export default class history extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      historyIn: true,
       refreshing: false,
-      historyInFromServer: [],
-      historyOutFromServer: [],
-      id: '',
+      historyFromServer: [],
+      historyError: false,
+      sdt: '',
+      ngayBD: '',
+      ngayKT: '',
+      isLoading: false,
     };
   }
   componentDidMount = async () => {
     var tokenAsync = await AsyncStorage.getItem('tokenLogin');
     getUserByToken(tokenAsync)
-      .then(resID => resID['idNguoiDung'])
-      .then(resJSON => {
-        this.setState({id: resJSON});
+      .then((resSDT) => resSDT['SDT'])
+      .then((resJSON) => {
+        this.setState({sdt: resJSON});
       })
-      .catch(error => {
-        this.onFailNetWork(error);
+      .catch((error) => {
+        this.onFailNetWork();
       });
   };
   componentDidUpdate(preProps, preState, a) {
-    const {id} = this.state;
-    if (preState.id !== id) {
-      this.getdataIn();
-      this.getdataOut();
+    const {sdt} = this.state;
+    if (preState.sdt !== sdt) {
+      this.getdataA();
     }
   }
-  getdataIn() {
-    const {id} = this.state;
-    this.setState({refreshing: true});
-    getHistoryIn(id)
-      .then(result => {
-        this.setState({historyInFromServer: result});
-        this.setState({refreshing: false});
+  getdata() {
+    const {sdt, ngayBD, ngayKT} = this.state;
+    if (ngayBD.length === 0) {
+      Alert.alert('Error!', 'Vui lòng chọn ngày bắt đầu!');
+      return;
+    }
+    if (ngayKT.length === 0) {
+      Alert.alert('Error!', 'Vui lòng chọn ngày kết thúc!');
+      return;
+    }
+    this.setState({isLoading: true});
+    getHistory(sdt, ngayBD, ngayKT)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'No post found') {
+          this.setState({
+            historyError: true,
+            refreshing: false,
+            isLoading: false,
+          });
+        } else {
+          this.setState({historyError: false});
+          getHistory(sdt, ngayBD, ngayKT)
+            .then((history) => {
+              this.setState({
+                historyFromServer: history,
+                refreshing: false,
+                isLoading: false,
+              });
+            })
+            .catch((error) => {
+              this.setState({
+                historyFromServer: [],
+                refreshing: false,
+                isLoading: false,
+              });
+            });
+        }
       })
-      .catch(error => {
-        this.onFailNetWork(error);
-        this.setState({historyInFromServer: []});
-        this.setState({refreshing: false});
-      });
-  }
-  getdataOut() {
-    const {id} = this.state;
-    this.setState({refreshing: true});
-    getHistoryOut(id)
-      .then(result => {
-        this.setState({historyOutFromServer: result});
-        this.setState({refreshing: false});
-      })
-      .catch(error => {
-        this.onFailNetWork(error);
-        this.setState({historyOutFromServer: []});
-        this.setState({refreshing: false});
-      });
+      .catch((error) => console.log(error));
   }
 
-  onRefresh = () => {
-    this.getdataIn();
-    this.getdataOut();
-  };
-  onFailNetWork(error) {
-    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại', 'LỖI: ' + error);
+  getdataA() {}
+  // onRefresh = () => {
+  //   this.getdata();
+  // };
+  onFailNetWork() {
+    Alert.alert('Có lỗi xảy ra! Vui lòng thử lại!');
     this.setState({isLoading: false});
-  }
-  moneyOut() {
-    this.setState({historyIn: false});
-  }
-  moneyIn() {
-    this.setState({historyIn: true});
   }
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.viewHeader}>
-            <View>
-              <TouchableOpacity
-                onPress={this.moneyIn.bind(this)}
-                style={[
-                  styles.buttonIn,
-                  {
-                    backgroundColor: this.state.historyIn
-                      ? '#AE1F17'
-                      : '#B5B5B5',
-                  },
-                ]}>
-                <Text style={styles.txtButton}>Tiền vào</Text>
-              </TouchableOpacity>
+          <View style={styles.condition}>
+            <View style={styles.BD}>
+              <View style={styles.lblBD}>
+                <Text style={styles.txtBD}>Từ ngày</Text>
+              </View>
+              <View style={styles.ipBD}>
+                <DatePicker
+                  placeholder={'Chọn ngày'}
+                  format="DD-MM-YYYY"
+                  minDate="2020-01-01"
+                  date={this.state.ngayBD}
+                  onDateChange={(date) => {
+                    this.setState({ngayBD: date});
+                  }}
+                />
+              </View>
             </View>
-            <View>
-              <TouchableOpacity
-                onPress={this.moneyOut.bind(this)}
-                style={[
-                  styles.buttonOut,
-                  {
-                    backgroundColor: this.state.historyIn
-                      ? '#B5B5B5'
-                      : '#AE1F17',
-                  },
-                ]}>
-                <Text style={styles.txtButton}>Tiền ra</Text>
-              </TouchableOpacity>
+            <View style={styles.KT}>
+              <View style={styles.lblKT}>
+                <Text style={styles.txtKT}>Đến ngày</Text>
+              </View>
+              <View style={styles.ipKT}>
+                <DatePicker
+                  placeholder={'Chọn ngày'}
+                  format="DD-MM-YYYY"
+                  minDate="2020-01-01"
+                  date={this.state.ngayKT}
+                  onDateChange={(date) => {
+                    this.setState({ngayKT: date});
+                  }}
+                />
+              </View>
             </View>
           </View>
+          <View style={styles.buttonAll}>
+            <TouchableOpacity
+              onPress={this.getdata.bind(this)}
+              style={styles.btnAll}>
+              <Text style={styles.txtBtnTienvao}>Truy vấn lịch sử</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.flatlist}>
-          <FlatList
-            data={
-              this.state.historyIn
-                ? this.state.historyInFromServer
-                : this.state.historyOutFromServer
-            }
-            renderItem={({item, index}) => (
-              <History_Item item={item} historyIn={this.state.historyIn} />
-            )}
-            keyExtractor={(item, index) => item.idLichSu}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this.onRefresh}
-              />
-            }
-          />
+        <View style={styles.main}>
+          {this.state.isLoading ? (
+            <Loading show={this.state.isLoading} />
+          ) : this.state.historyError ? (
+            <FlatList
+              data={DATA}
+              renderItem={({item}) => (
+                <View style={styles.bxhError}>
+                  <Text style={styles.txtBxhError}>{item.Result}</Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.id}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefresh}
+                />
+              }
+            />
+          ) : (
+            <FlatList
+              data={this.state.historyFromServer}
+              renderItem={({item, index}) => <History_Item item={item} />}
+              keyExtractor={(item, index) => item.idLichSu}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefresh}
+                />
+              }
+            />
+          )}
         </View>
       </View>
     );
@@ -167,42 +207,80 @@ export default class history extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
   },
   header: {
-    borderColor: '#545454',
+    flex: 1.7,
+    borderBottomColor: '#c0c0c0',
     borderBottomWidth: 2,
   },
-  viewHeader: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  main: {
+    flex: 8,
+    // backgroundColor: 'red',
+  },
+  condition: {
     flexDirection: 'row',
-    marginBottom: '3%',
+    marginTop: 20,
   },
-  buttonIn: {
+  BD: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: hp('7%'),
-    width: wp('45%'),
-    backgroundColor: '#AE1F17',
-    borderTopLeftRadius: 20,
-    borderRightWidth: 1,
-    borderColor: 'white',
+    flex: 4,
   },
-  buttonOut: {
+  KT: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: hp('7%'),
-    width: wp('45%'),
-    backgroundColor: '#AE1F17',
-    borderTopRightRadius: 20,
-    borderLeftWidth: 1,
-    borderColor: 'white',
+    flex: 4,
   },
-  txtButton: {
+  lblBD: {
+    marginRight: 5,
+  },
+  textInputBD: {
+    fontSize: f(1.5),
+    padding: '3%',
+  },
+  txtBD: {
+    fontSize: f(1.5),
+  },
+  lblKT: {
+    marginRight: 5,
+  },
+  textInputKT: {
+    fontSize: f(1.5),
+    padding: '3%',
+  },
+  txtKT: {
+    fontSize: f(1.5),
+  },
+  buttonAll: {
+    flex: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnAll: {
+    backgroundColor: '#AE1F17',
+    height: hp(4),
+    width: wp(60),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: f(2),
+  },
+  txtBtnTienvao: {
     color: 'white',
-    fontSize: f(2.5),
   },
-  flatlist: {
-    marginTop: 10,
+  DS: {
+    margin: 5,
+  },
+  bxhError: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  txtBxhError: {
+    fontSize: f(2),
+    color: '#AE1F17',
+    fontWeight: 'bold',
   },
 });
