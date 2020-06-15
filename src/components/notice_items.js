@@ -14,7 +14,7 @@ import {
 import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
 import Entypo from 'react-native-vector-icons/Entypo';
 var {width, height} = Dimensions.get('window');
-import avatar from '../../images/canhan.png';
+import avatar from '../../images/loa.png';
 export default class Notice_items extends Component {
   constructor(props) {
     super(props);
@@ -83,18 +83,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imgAvatar: {
-    height: hp('5%'),
-    width: wp('10%'),
+    height: hp('4%'),
+    width: wp('8%'),
   },
   tentin: {
     fontWeight: 'bold',
     marginTop: '2%',
     color: '#545454',
     textTransform: 'uppercase',
-    fontSize: f(1.5),
+    fontSize: f(1.7),
   },
   ngaygio: {
-    fontSize: f(1.5),
+    fontSize: f(1.7),
   },
   mainWidth: {
     width: wp('96%'),

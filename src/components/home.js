@@ -27,6 +27,9 @@ import {responsiveFontSize as f} from 'react-native-responsive-dimensions';
 import getUserByToken from '../api/getUserByToken';
 import getmoney from '../way4/getmoney';
 import diemdanh from '../api/diemdanh';
+import diemdanhW4 from '../way4/diemdanhW4';
+import getInforDiemDanh from '../api/getInforDiemDanh';
+
 const DATA = [
   {
     id: '1',
@@ -46,6 +49,8 @@ class home extends Component {
       id: '',
       sdt: '',
       sodu: '',
+      idDiemDanh: '',
+      sotienDD: '',
     };
   }
 
@@ -66,23 +71,38 @@ class home extends Component {
       .catch((error) => {
         this.onFailNetWork();
       });
+    getInforDiemDanh()
+      .then((resID) => resID['idDiemDanh'])
+      .then((res) => {
+        this.setState({idDiemDanh: res});
+      });
+    getInforDiemDanh()
+      .then((resST) => resST['SoTienML'])
+      .then((res) => {
+        this.setState({sotienDD: res});
+      });
   };
   onFailNetWork() {
     Alert.alert('Có lỗi xảy ra! Vui lòng thử lại');
     this.setState({isLoading: false});
   }
   componentDidUpdate(preProps, preState, a) {
-    const {sdt, id} = this.state;
+    const {sdt, id, idDiemDanh, sotienDD} = this.state;
     if (preState.sdt !== sdt) {
       this.getData();
     }
     if (preState.id !== id) {
       this.getdataTD();
     }
+    if (preState.idDiemDanh !== idDiemDanh) {
+      this.getdataTD();
+    }
+    if (preState.sotienDD !== sotienDD) {
+      this.getdataTD();
+    }
   }
   getdataTD() {
-    const {item} = this.props;
-    const {id} = this.state;
+    const {id, idDiemDanh, sotienDD} = this.state;
   }
   getData = () => {
     this.setState({refreshing: true});
@@ -121,8 +141,8 @@ class home extends Component {
     this.refreshDataFromServer();
     this.getData();
   };
-  khaosat() {
-    Alert.alert('Notice!', 'Khảo sát!');
+  quangcao() {
+    Alert.alert('Notice!', 'Chưa có quảng cáo!');
   }
 
   diemdanhF() {
@@ -131,12 +151,24 @@ class home extends Component {
       .then((resJSON) => resJSON['message'])
       .then((res) => {
         if (res === 'Success') {
-          Alert.alert('Notice!', 'Điểm danh thành công!');
+          this.diemdanhSuccess();
         } else {
           Alert.alert('Error!', 'Đã hết lượt điểm danh trong ngày!');
         }
       })
       .catch((error) => console.log(error));
+  }
+  diemdanhSuccess() {
+    const {sdt, idDiemDanh, sotienDD} = this.state;
+    diemdanhW4(idDiemDanh, sdt, sotienDD)
+      .then((res) => res['message'])
+      .then((result) => {
+        if (result === 'success') {
+          Alert.alert('Notice!', 'Điểm danh thành công!');
+        } else {
+          Alert.alert('Error!', 'Có lỗi xảy ra vui lòng thử lại!');
+        }
+      });
   }
   render() {
     return (
@@ -155,10 +187,12 @@ class home extends Component {
           </ImageBackground>
         </View>
         <View style={styles.between}>
-          <TouchableOpacity style={styles.khaosat}>
+          <TouchableOpacity
+            onPress={this.quangcao.bind(this)}
+            style={styles.khaosat}>
             <View style={styles.khaosat}>
               <AntDesign name={'areachart'} size={wp('5%')} color={'#AE1F17'} />
-              <Text style={styles.txtBetween}>Khảo sát</Text>
+              <Text style={styles.txtBetween}>Quảng cáo</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity

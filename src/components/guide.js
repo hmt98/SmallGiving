@@ -109,7 +109,7 @@ export default class Guide extends React.Component {
                 <Text style={styles.txtColName}>Chủ thẻ:</Text>
               </View>
               <View style={styles.colValue}>
-                <Text style={styles.txtColValue}>Sinh Tồn</Text>
+                <Text style={styles.txtColValue}>Đoàn TN HVNH </Text>
               </View>
             </View>
             <View style={styles.cardInfor}>
@@ -117,7 +117,7 @@ export default class Guide extends React.Component {
                 <Text style={styles.txtColName}>Số tài khoản:</Text>
               </View>
               <View style={styles.colValue}>
-                <Text style={styles.txtColValue}>0123456789999</Text>
+                <Text style={styles.txtColValue}>02475869999</Text>
               </View>
             </View>
             <View style={styles.cardInfor}>
@@ -125,7 +125,7 @@ export default class Guide extends React.Component {
                 <Text style={styles.txtColName}>Ngân hàng:</Text>
               </View>
               <View style={styles.colValue}>
-                <Text style={styles.txtColValue}>Small Giving</Text>
+                <Text style={styles.txtColValue}>Quân Đội - MB</Text>
               </View>
             </View>
           </View>

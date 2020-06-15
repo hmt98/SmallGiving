@@ -66,7 +66,7 @@ export default class Donate_infor_items extends Component {
     theodoi(id, item.idHoatDong)
       .then((res) => res['message'])
       .then((result) => {
-        if (result === 'success') {
+        if (result === 'follow') {
           Alert.alert('Notice!', 'Đã theo dõi!');
         } else {
           Alert.alert('Error!', 'Có lỗi xảy ra! Vui lòng thử lại!');

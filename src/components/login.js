@@ -51,11 +51,11 @@ class login extends Component {
     };
   }
 
-  componentWillReceiveProps = async nextProps => {
+  componentWillReceiveProps = async (nextProps) => {
     //kiểm tra xem có kết nối mạng chưa
     if (nextProps.myError) {
+      this.setState({isLoading: false});
       Alert.alert('Error!', 'Vui lòng kiểm tra kết nối mạng!');
-
       return;
     }
     //kiểm tra xem thông tin đăng nhập đúng chưa
@@ -89,11 +89,15 @@ class login extends Component {
     this.setState({isLoading: true});
     if (username.includes('@')) {
       getTokenEmail(username, password)
-        .then(res => this.props.loginSuccess(username, password, res['token']))
+        .then((res) =>
+          this.props.loginSuccess(username, password, res['token']),
+        )
         .catch(() => this.props.loginError());
     } else {
       getTokenSDT(username, password)
-        .then(res => this.props.loginSuccess(username, password, res['token']))
+        .then((res) =>
+          this.props.loginSuccess(username, password, res['token']),
+        )
         .catch(() => this.props.loginError());
     }
   };
@@ -117,7 +121,7 @@ class login extends Component {
             <TextInput
               style={styles.textInputIn}
               placeholder={'Nhập Email hoặc SĐT'}
-              onChangeText={text => this.setState({username: text})}
+              onChangeText={(text) => this.setState({username: text})}
               value={this.state.username}
               keyboardType="email-address"
             />
@@ -126,7 +130,7 @@ class login extends Component {
             <TextInput
               style={styles.textInputInPass}
               placeholder={'Nhập mật khẩu'}
-              onChangeText={text => this.setState({password: text})}
+              onChangeText={(text) => this.setState({password: text})}
               value={this.state.password}
               secureTextEntry={this.state.hindPass}
             />
@@ -265,11 +269,8 @@ function mapStateToProps(state) {
     myToken: state.token,
   };
 }
-export default connect(
-  mapStateToProps,
-  {
-    startGetToken,
-    loginSuccess,
-    loginError,
-  },
-)(login);
+export default connect(mapStateToProps, {
+  startGetToken,
+  loginSuccess,
+  loginError,
+})(login);
